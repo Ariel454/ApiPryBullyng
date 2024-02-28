@@ -1,0 +1,6 @@
+@ApiPryBullyng_HostAddress = http://localhost:5133
+
+GET {{ApiPryBullyng_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
