@@ -13,8 +13,8 @@ namespace ApiPryBullyng.Models.DB
 
         public int CantidadMensajes { get; set; }
 
-        public virtual Usuario IdUsuarioDestinatarioNavigation { get; set; }
+        public virtual Usuario? IdUsuarioDestinatarioNavigation { get; set; }
 
-        public virtual Usuario IdUsuarioRemitenteNavigation { get; set; }
+        public virtual Usuario? IdUsuarioRemitenteNavigation { get; set; }
     }
 }

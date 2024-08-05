@@ -9,7 +9,9 @@ using ApiPryBullyng.Models.DB;
 
 namespace ApiPryBullyng.Controllers
 {
-    public class ResultadosController : Controller
+    [Route("[controller]")]
+    [ApiController]
+    public class ResultadosController : ControllerBase
     {
         private readonly AppbullyingContext _context;
 
@@ -18,152 +20,95 @@ namespace ApiPryBullyng.Controllers
             _context = context;
         }
 
-        // GET: Resultados
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [Route("ListarResultados")]
+        public async Task<IActionResult> listarResultados()
         {
-            var appbullyingContext = _context.Resultados.Include(r => r.IdTestNavigation).Include(r => r.IdUsuarioNavigation);
-            return View(await appbullyingContext.ToListAsync());
+
+            List<Resultado> resultados = await _context.Resultados.ToListAsync();
+
+
+            return Ok(resultados);
+
         }
 
-        // GET: Resultados/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var resultado = await _context.Resultados
-                .Include(r => r.IdTestNavigation)
-                .Include(r => r.IdUsuarioNavigation)
-                .FirstOrDefaultAsync(m => m.IdResultado == id);
-            if (resultado == null)
-            {
-                return NotFound();
-            }
-
-            return View(resultado);
-        }
-
-        // GET: Resultados/Create
-        public IActionResult Create()
-        {
-            ViewData["IdTest"] = new SelectList(_context.Tests, "IdTest", "IdTest");
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "IdUsuario");
-            return View();
-        }
-
-        // POST: Resultados/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdResultado,IdTest,IdUsuario,VecesSi,VecesNo")] Resultado resultado)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(resultado);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["IdTest"] = new SelectList(_context.Tests, "IdTest", "IdTest", resultado.IdTest);
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "IdUsuario", resultado.IdUsuario);
-            return View(resultado);
-        }
-
-        // GET: Resultados/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var resultado = await _context.Resultados.FindAsync(id);
-            if (resultado == null)
-            {
-                return NotFound();
-            }
-            ViewData["IdTest"] = new SelectList(_context.Tests, "IdTest", "IdTest", resultado.IdTest);
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "IdUsuario", resultado.IdUsuario);
-            return View(resultado);
-        }
-
-        // POST: Resultados/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdResultado,IdTest,IdUsuario,VecesSi,VecesNo")] Resultado resultado)
-        {
-            if (id != resultado.IdResultado)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(resultado);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ResultadoExists(resultado.IdResultado))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["IdTest"] = new SelectList(_context.Tests, "IdTest", "IdTest", resultado.IdTest);
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "IdUsuario", resultado.IdUsuario);
-            return View(resultado);
-        }
-
-        // GET: Resultados/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var resultado = await _context.Resultados
-                .Include(r => r.IdTestNavigation)
-                .Include(r => r.IdUsuarioNavigation)
-                .FirstOrDefaultAsync(m => m.IdResultado == id);
-            if (resultado == null)
-            {
-                return NotFound();
-            }
-
-            return View(resultado);
-        }
-
-        // POST: Resultados/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpGet]
+        [Route("BuscarResultado")]
+        public async Task<IActionResult> ObtenerResultado(int id)
         {
             var resultado = await _context.Resultados.FindAsync(id);
-            if (resultado != null)
+
+            if (resultado == null)
             {
-                _context.Resultados.Remove(resultado);
+                return NotFound();
             }
 
+            return Ok(resultado);
+        }
+
+        [HttpPost]
+        [Route("RegistrarResultado")]
+        public async Task<IActionResult> GuardarMensajeNoLeido([FromQuery] int idTest, [FromQuery] int idUsuario, [FromQuery] int PuntajeResultados)
+        {
+            var resultado = new Resultado
+            {
+                IdTest = idTest,
+                IdUsuario = idUsuario,               
+                PuntajeResultados = PuntajeResultados
+            };
+
+            _context.Resultados.Add(resultado);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return Ok(new
+            {
+                success = true,
+                message = "Mensaje registrado",
+                result = resultado
+            });
         }
+
+
+
+        // DELETE: api/Mensajes/5
+        [HttpDelete]
+        [Route("EliminarResultado")]
+        public async Task<IActionResult> BorrarResultado(int id)
+        {
+            var resultado = await _context.Resultados.FindAsync(id);
+
+            if (resultado == null)
+            {
+                return NotFound();
+            }
+
+            _context.Resultados.Remove(resultado);
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                success = true,
+                message = "Mensaje actualizado",
+                result = resultado
+            });
+        }
+
+        [HttpGet]
+        [Route("ListarResultadosPorCursoYTest")]
+        public async Task<IActionResult> listarResultadosPorCursoYTest(int idCurso, int idTest)
+        {
+            // Filtrar los resultados por el ID del curso y el ID del test
+            var resultados = await _context.Resultados
+                .Where(r => _context.Usuarios.Any(u => u.IdUsuario == r.IdUsuario && u.IdCursoF == idCurso) && r.IdTest == idTest)
+                .ToListAsync();
+
+            return Ok(resultados);
+        }
+
+
 
         private bool ResultadoExists(int id)
         {
-            return _context.Resultados.Any(e => e.IdResultado == id);
+            return (_context.Resultados?.Any(e => e.IdResultado == id)).GetValueOrDefault();
         }
     }
 }

@@ -20,8 +20,6 @@ public partial class AppbullyingContext : DbContext
 
     public virtual DbSet<Formulario> Formularios { get; set; }
 
-    public virtual DbSet<Informacion> Informacions { get; set; }
-
     public virtual DbSet<Institucion> Institucions { get; set; }
 
     public virtual DbSet<Mensaje> Mensajes { get; set; }
@@ -71,8 +69,7 @@ public partial class AppbullyingContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("detalle");
             entity.Property(e => e.Fecha)
-                .HasMaxLength(5000)
-                .IsUnicode(false)
+                .IsRequired()
                 .HasColumnName("fecha");
             entity.Property(e => e.IdUsuarioF).HasColumnName("id_UsuarioF");
             entity.Property(e => e.TituloCaso)
@@ -84,31 +81,6 @@ public partial class AppbullyingContext : DbContext
             entity.HasOne(d => d.IdUsuarioFNavigation).WithMany(p => p.Formularios)
                 .HasForeignKey(d => d.IdUsuarioF)
                 .HasConstraintName("FK_ID_Usuario3");
-        });
-
-        modelBuilder.Entity<Informacion>(entity =>
-        {
-            entity.HasKey(e => e.IdInformacion).HasName("PK_ID_Informacion");
-
-            entity.ToTable("Informacion");
-
-            entity.Property(e => e.IdInformacion).HasColumnName("id_Informacion");
-            entity.Property(e => e.IdInstitucionF).HasColumnName("id_InstitucionF");
-            entity.Property(e => e.Texto)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("texto");
-            entity.Property(e => e.TituloInfo)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("tituloInfo");
-
-            entity.HasOne(d => d.IdInstitucionFNavigation).WithMany(p => p.Informacions)
-                .HasForeignKey(d => d.IdInstitucionF)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ID_Institucion");
         });
 
         modelBuilder.Entity<Institucion>(entity =>
@@ -213,8 +185,7 @@ public partial class AppbullyingContext : DbContext
             entity.Property(e => e.IdResultado).HasColumnName("id_Resultado");
             entity.Property(e => e.IdTest).HasColumnName("id_Test");
             entity.Property(e => e.IdUsuario).HasColumnName("id_Usuario");
-            entity.Property(e => e.VecesNo).HasColumnName("vecesNo");
-            entity.Property(e => e.VecesSi).HasColumnName("vecesSi");
+            entity.Property(e => e.PuntajeResultados).HasColumnName("puntajeResultados");
 
             entity.HasOne(d => d.IdTestNavigation).WithMany(p => p.Resultados)
                 .HasForeignKey(d => d.IdTest)
@@ -266,6 +237,7 @@ public partial class AppbullyingContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("nombreUsuario");
             entity.Property(e => e.Rol).HasColumnName("rol");
+            entity.Property(e => e.FechaNacimiento).IsRequired().HasColumnName("fechaNacimiento");
 
             entity.HasOne(d => d.IdCursoFNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdCursoF)

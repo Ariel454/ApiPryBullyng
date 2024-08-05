@@ -13,7 +13,7 @@ public partial class Formulario
 
     public string? Detalle { get; set; }
 
-    public string? Fecha { get; set; }
+    public DateTime Fecha { get; set; }
 
     public virtual Usuario? IdUsuarioFNavigation { get; set; }
 }

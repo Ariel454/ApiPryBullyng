@@ -11,9 +11,7 @@ public partial class Resultado
 
     public int? IdUsuario { get; set; }
 
-    public int? VecesSi { get; set; }
-
-    public int? VecesNo { get; set; }
+    public int? PuntajeResultados { get; set; }
 
     public virtual Test? IdTestNavigation { get; set; }
 

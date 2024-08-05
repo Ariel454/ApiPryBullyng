@@ -21,6 +21,7 @@ namespace ApiPryBullyng.Models.DB
         public string Contrasenia { get; set; } = null!;
         public int Genero { get; set; }
         public string Correo { get; set; } = null!;
+        public DateTime FechaNacimiento { get; set; }
         public virtual Curso IdCursoFNavigation { get; set; } = null!;
         public virtual ICollection<Formulario> Formularios { get; set; }
         public virtual ICollection<Resultado> Resultados { get; set; }

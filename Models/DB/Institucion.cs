@@ -17,5 +17,4 @@ public partial class Institucion
 
     public virtual ICollection<Curso> Cursos { get; set; } = new List<Curso>();
 
-    public virtual ICollection<Informacion> Informacions { get; set; } = new List<Informacion>();
 }

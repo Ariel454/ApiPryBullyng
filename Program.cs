@@ -4,13 +4,17 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 // DATABASE CONNECTION
-// DATABASE CONNECTION
 builder.Configuration.AddJsonFile("appsettings.json");
-string connectionString = builder.Configuration.GetConnectionString("MyDataBase");
+string? connectionString = builder.Configuration.GetConnectionString("MyDataBase");
+
+// Manejar el caso de valor nulo
+if (connectionString is null)
+{
+    throw new InvalidOperationException("The connection string 'MyDataBase' was not found.");
+}
 
 builder.Services.AddDbContext<AppbullyingContext>(options =>
   options.UseSqlServer(connectionString));

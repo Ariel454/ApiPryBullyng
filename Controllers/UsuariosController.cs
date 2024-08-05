@@ -56,7 +56,7 @@ namespace ApiPryBullyng.Controllers
         [Route("RegistrarUsuario")]
         public async Task<IActionResult> guardarUsuario([FromQuery] int Curso, [FromQuery] int Rol, [FromQuery] string Nombre,
             [FromQuery] string NombreUsuario, [FromQuery] string Contrasenia, [FromQuery] int Genero,
-            [FromQuery] string Correo)
+            [FromQuery] string Correo, [FromQuery] string FechaNacimiento)
 
         {
             var usuario = new Usuario();
@@ -68,6 +68,18 @@ namespace ApiPryBullyng.Controllers
             usuario.Contrasenia = Contrasenia;
             usuario.Genero = Genero;
             usuario.Correo = Correo;
+            // Convertir la cadena de FechaNacimiento a DateTime
+            if (DateTime.TryParse(FechaNacimiento, out DateTime fechaNacimiento))
+            {
+                // Asignar la fecha de nacimiento convertida al usuario
+                usuario.FechaNacimiento = fechaNacimiento;
+            }
+            else
+            {
+                // Manejar el caso en que la conversión falle
+                return BadRequest("Formato de fecha de nacimiento inválido");
+            }
+
 
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
@@ -84,10 +96,9 @@ namespace ApiPryBullyng.Controllers
 
         [HttpPut]
         [Route("EditarUsuario")]
-        public async Task<IActionResult> EditarUsuario(int id, [FromQuery] int Curso, [FromQuery] int Mensaje,
-            [FromQuery] int Formulario, [FromQuery] int Rol, [FromQuery] string Nombre,
+        public async Task<IActionResult> EditarUsuario(int id, [FromQuery] int Curso, [FromQuery] int Rol, [FromQuery] string Nombre,
             [FromQuery] string NombreUsuario, [FromQuery] string Contrasenia, [FromQuery] int Genero,
-            [FromQuery] string Correo)
+            [FromQuery] string Correo, [FromQuery] string FechaNacimiento)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
 
@@ -104,6 +115,17 @@ namespace ApiPryBullyng.Controllers
             usuario.Contrasenia = Contrasenia;
             usuario.Genero = Genero;
             usuario.Correo = Correo;
+            // Convertir la cadena de FechaNacimiento a DateTime
+            if (DateTime.TryParse(FechaNacimiento, out DateTime fechaNacimiento))
+            {
+                // Asignar la fecha de nacimiento convertida al usuario
+                usuario.FechaNacimiento = fechaNacimiento;
+            }
+            else
+            {
+                // Manejar el caso en que la conversión falle
+                return BadRequest("Formato de fecha de nacimiento inválido");
+            }
 
             await _context.SaveChangesAsync();
 

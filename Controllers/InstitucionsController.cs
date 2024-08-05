@@ -52,7 +52,7 @@ namespace ApiPryBullyng.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
         [Route("EditarInstitucion")]
-        public async Task<IActionResult> EditarInstitucion(int id, [FromQuery] string Nombre, [FromQuery] string Logo,
+        public async Task<IActionResult> EditarInstitucion(int id, [FromQuery] string Nombre, [FromQuery] string Logo, string Direccion,
             [FromQuery] string Info)
         {
             var institucion = await _context.Institucions.FindAsync(id);
@@ -66,6 +66,7 @@ namespace ApiPryBullyng.Controllers
             institucion.Nombre = Nombre;
             institucion.Logo = Logo;
             institucion.Info = Info;
+            institucion.Direccion = Direccion;
 
             await _context.SaveChangesAsync();
 
